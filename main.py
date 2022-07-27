@@ -3,17 +3,6 @@ from json import dump, load
 from csv import writer
 
 
-# def add_new_item(FUNCTION):
-#     def wrapper(json_file, csv_file):
-#         new_data = set_new_item()
-#         FUNCTION(json_file, csv_file)
-#         return new_data
-
-#     return wrapper
-
-# TODO: Add new item
-
-
 def json_to_csv(json_file, csv_file):
     with open(json_file) as json_file:
         jsondata = load(json_file)
