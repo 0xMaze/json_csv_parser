@@ -1,3 +1,4 @@
+from hashlib import new
 from json import dump, load
 from csv import writer
 
@@ -43,8 +44,11 @@ def set_new_item():
     elif car == "N":
         car = False
 
-    languages = input("Languages (WITH SPACES): ")
-    languages = languages.split(" ")
+    languages = input("Languages (WITH SPACES), press ENTER if none: ")
+    if languages == "":
+        languages = None
+    else:
+        languages = languages.split(" ")
 
     data = {
         "name": name,
@@ -58,11 +62,24 @@ def set_new_item():
     return data
 
 
-def write_json(json_file):
+def find_person_by_name(json_file):
+    name = input("Name: ")
+
+    with open(json_file) as json_file:
+        jsondata = load(json_file)
+
+    for data in jsondata:
+        if data["name"] == name:
+            print(data)
+    return None
+
+
+def write_json(json_file, new_data=None):
+    if new_data is None:
+        new_data = set_new_item()
+
     with open(json_file, "r") as f:
         data = load(f)
-
-    new_data = set_new_item()
 
     data.append(new_data)
 
@@ -71,29 +88,18 @@ def write_json(json_file):
     return
 
 
-def write_csv(csv_file):
-    new_data = set_new_item()
+def write_csv(csv_file, new_data=None):
+    if new_data is None:
+        new_data = set_new_item()
 
     with open(csv_file, "a", newline="") as csv_file:
         csv_writer = writer(csv_file)
         csv_writer.writerow(new_data.values())
 
 
-def find_by_name(json_file):
-    with open(json_file) as json_file:
-        jsondata = load(json_file)
-
-    name = input("Name: ")
-
-    for data in jsondata:
-        if data["name"] == name:
-            print(data)
-            return
-    print("No data found")
-    return
-
-
 def find_by_language(json_file):
+    found_people = []
+
     with open(json_file) as json_file:
         jsondata = load(json_file)
 
@@ -101,10 +107,15 @@ def find_by_language(json_file):
 
     for data in jsondata:
         if language in data["languages"]:
-            print(data)
-            return
-    print("No data found")
-    return
+            found_people.append(data)
+
+    if len(found_people) == 0:
+        print("No people found")
+        return
+    else:
+        for person in found_people:
+            print(person["name"])
+        return
 
 
 def filter_by_height(json_file):
@@ -128,31 +139,29 @@ def main():
         print(
             """
         1. Add new item
-        2. Write JSON file
-        3. Write CSV file
-        4. Find by name
-        5. Find by language
-        6. Filter by height
-        7. Exit
+        2. Convert JSON to CSV
+        3. Find by name
+        4. Find by language
+        5. Filter by height
+        6. Exit
         """
         )
 
         choice = input("Choice: ")
 
         if choice == "1":
-            write_json("data.json")
-            write_csv("data.csv")
+            new_data = set_new_item()
+            write_json("data.json", new_data)
+            write_csv("data.csv", new_data)
         elif choice == "2":
             json_to_csv("data.json", "data.csv")
         elif choice == "3":
-            write_csv("data.csv")
+            find_person_by_name("data.json")
         elif choice == "4":
-            find_by_name("data.json")
-        elif choice == "5":
             find_by_language("data.json")
-        elif choice == "6":
+        elif choice == "5":
             print(filter_by_height("data.json"))
-        elif choice == "7":
+        elif choice == "6":
             break
         else:
             print("Invalid choice")

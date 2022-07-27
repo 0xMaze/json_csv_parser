@@ -32,16 +32,5 @@
             "C++",
             "C"
         ]
-    },
-    {
-        "name": "Zakhar Malinouski",
-        "birthday": "10.09.2002",
-        "height": "182",
-        "weight": "78",
-        "car": false,
-        "languages": [
-            "Python",
-            "Solidity"
-        ]
     }
 ]
